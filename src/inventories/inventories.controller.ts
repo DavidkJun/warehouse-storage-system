@@ -3,6 +3,7 @@ import { InventoriesService } from './inventories.service';
 import { CreateInventoryDto } from '../dtos/createInventory.dto';
 import { Inventory } from '@prisma/client';
 import { DeleteInventoryDto } from '../dtos/deleteInventory.dto';
+import { TransferInventoryDto } from '../dtos/transferInventory.dto';
 
 @Controller('inventories')
 export class InventoriesController {
@@ -18,5 +19,11 @@ export class InventoriesController {
   @Delete()
   async deleteInventory(@Body() dto: DeleteInventoryDto): Promise<Inventory> {
     return await this.inventoriesService.deleteInventory(dto);
+  }
+  @Post('transfer')
+  async transferInventory(
+    @Body() dto: TransferInventoryDto,
+  ): Promise<Inventory> {
+    return await this.inventoriesService.transferInventory(dto);
   }
 }

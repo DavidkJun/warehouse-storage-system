@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { Inventory, Prisma } from '@prisma/client';
 import { UpdateInventoryDto } from '../dtos/updateInventory.dto';
 import { DeleteInventoryDto } from '../dtos/deleteInventory.dto';
+import { TransferInventoryDto } from '../dtos/transferInventory.dto';
 
 @Injectable()
 export class InventoriesService {
@@ -11,7 +12,10 @@ export class InventoriesService {
   async getInventories() {
     return await this.prisma.inventory.findMany();
   }
-  getInventory(data: { productId: number; warehouseId: number }) {
+  getInventory(data: {
+    productId: number;
+    warehouseId: number;
+  }): Promise<Inventory | null> {
     return this.prisma.inventory.findFirst({
       where: {
         productId: data.productId,
@@ -46,6 +50,44 @@ export class InventoriesService {
     if (!inventory) throw new HttpException('Inventory not found', 404);
     return this.prisma.inventory.delete({
       where: { id: inventory.id },
+    });
+  }
+  async transferInventory(data: TransferInventoryDto) {
+    return this.prisma.$transaction(async (tx) => {
+      const sourceInventory = await tx.inventory.findFirst({
+        where: {
+          productId: data.productId,
+          warehouseId: data.sourceWarehouseId,
+        },
+      });
+      if (!sourceInventory) throw new HttpException('Inventory not found', 404);
+      if (sourceInventory.quantity < data.quantityToTransfer)
+        throw new HttpException('Not enough stock to transfer', 404);
+      await tx.inventory.update({
+        where: { id: sourceInventory.id },
+        data: { quantity: sourceInventory.quantity - data.quantityToTransfer },
+      });
+      const targetInventory = await tx.inventory.findFirst({
+        where: {
+          productId: data.productId,
+          warehouseId: data.targetWarehouseId,
+        },
+      });
+      if (!targetInventory) {
+        const dataForCreate: Prisma.InventoryCreateInput = {
+          product: { connect: { id: data.productId } },
+          quantity: data.quantityToTransfer,
+          warehouse: { connect: { id: data.targetWarehouseId } },
+        };
+        await tx.inventory.create({ data: dataForCreate });
+      } else {
+        await tx.inventory.update({
+          where: { id: targetInventory.id },
+          data: {
+            quantity: targetInventory.quantity + data.quantityToTransfer,
+          },
+        });
+      }
     });
   }
 }
