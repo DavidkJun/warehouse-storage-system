@@ -52,8 +52,8 @@ export class InventoriesService {
       where: { id: inventory.id },
     });
   }
-  async transferInventory(data: TransferInventoryDto) {
-    return this.prisma.$transaction(async (tx) => {
+  async transferInventory(data: TransferInventoryDto): Promise<void> {
+    await this.prisma.$transaction(async (tx) => {
       const sourceInventory = await tx.inventory.findFirst({
         where: {
           productId: data.productId,
@@ -89,5 +89,6 @@ export class InventoriesService {
         });
       }
     });
+    return;
   }
 }
