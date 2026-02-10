@@ -21,9 +21,7 @@ export class InventoriesController {
     return await this.inventoriesService.deleteInventory(dto);
   }
   @Post('transfer')
-  async transferInventory(
-    @Body() dto: TransferInventoryDto,
-  ): Promise<Inventory> {
+  async transferInventory(@Body() dto: TransferInventoryDto) {
     return await this.inventoriesService.transferInventory(dto);
   }
 }
