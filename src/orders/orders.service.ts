@@ -10,7 +10,7 @@ import { Prisma } from '@prisma/client';
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
   async placeOrder(customerId: number, order: CreateOrderDto) {
-    await this.prisma.$transaction(async (tx) => {
+    return this.prisma.$transaction(async (tx) => {
       const codes = order.orderItems.map((item) => item.productCode);
       let totalPrice = 0;
       const itemsToSave: Prisma.OrderItemCreateManyOrderInput[] = [];
