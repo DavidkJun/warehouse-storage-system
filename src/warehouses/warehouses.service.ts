@@ -6,9 +6,11 @@ import { CreateWarehouseDto } from '../dtos/createWarehouse.dto';
 @Injectable()
 export class WarehousesService {
   constructor(private prisma: PrismaService) {}
+
   getWarehouses(): Promise<WarehouseDto[]> {
     return this.prisma.warehouse.findMany();
   }
+
   async createWarehouse(data: CreateWarehouseDto) {
     const createdWarehouse = await this.prisma.warehouse.create({ data });
     return {
