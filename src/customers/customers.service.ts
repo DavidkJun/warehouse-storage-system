@@ -12,6 +12,7 @@ import { encodePassword } from '../utils/bcrypt';
 @Injectable()
 export class CustomersService {
   constructor(private prisma: PrismaService) {}
+
   async getCustomerById(id: number) {
     const customer = await this.prisma.customer.findUnique({
       where: { id },
@@ -24,6 +25,7 @@ export class CustomersService {
     if (!customer) throw new NotFoundException('Customer not found');
     return customer;
   }
+  //commit check
   async createCustomer(data: CreateCustomerDto) {
     try {
       const hashedPass = await encodePassword(data.password);
@@ -48,6 +50,7 @@ export class CustomersService {
       throw new InternalServerErrorException();
     }
   }
+
   async deleteCustomer(id: number) {
     try {
       return await this.prisma.customer.delete({
