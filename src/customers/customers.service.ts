@@ -25,7 +25,7 @@ export class CustomersService {
     if (!customer) throw new NotFoundException('Customer not found');
     return customer;
   }
-  //commit check
+
   async createCustomer(data: CreateCustomerDto) {
     try {
       const hashedPass = await encodePassword(data.password);
