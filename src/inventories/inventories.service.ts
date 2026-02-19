@@ -9,9 +9,11 @@ import { TransferInventoryDto } from '../dtos/transferInventory.dto';
 @Injectable()
 export class InventoriesService {
   constructor(private prisma: PrismaService) {}
+
   async getInventories() {
     return await this.prisma.inventory.findMany();
   }
+
   getInventory(data: {
     productId: number;
     warehouseId: number;
@@ -23,14 +25,14 @@ export class InventoriesService {
       },
     });
   }
+
   async insertInventory(data: CreateInventoryDto): Promise<Inventory> {
-    /*
     const dataForFinding = {
       productId: data.productId,
       warehouseId: data.warehouseId,
     };
-    */
-    const inventory = await this.getInventory(data);
+    const inventory = await this.getInventory(dataForFinding);
+
     if (!inventory) {
       const dataForCreate: Prisma.InventoryCreateInput = {
         product: { connect: { id: data.productId } },
@@ -39,18 +41,21 @@ export class InventoriesService {
       };
       return this.prisma.inventory.create({ data: dataForCreate });
     }
+
     const dataForUpdate: UpdateInventoryDto = {
       id: inventory.id,
       quantity: inventory.quantity + data.quantity,
     };
     return this.updateInventory(dataForUpdate);
   }
+
   async updateInventory(data: UpdateInventoryDto): Promise<Inventory> {
     return this.prisma.inventory.update({
       where: { id: data.id },
       data: { quantity: data.quantity },
     });
   }
+
   async deleteInventory(data: DeleteInventoryDto) {
     const inventory = await this.getInventory(data);
     if (!inventory) throw new HttpException('Inventory not found', 404);
@@ -58,6 +63,7 @@ export class InventoriesService {
       where: { id: inventory.id },
     });
   }
+
   async transferInventory(data: TransferInventoryDto): Promise<void> {
     await this.prisma.$transaction(async (tx) => {
       const sourceInventory = await tx.inventory.findFirst({
