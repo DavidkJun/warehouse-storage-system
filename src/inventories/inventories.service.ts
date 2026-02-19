@@ -3,7 +3,6 @@ import { CreateInventoryDto } from '../dtos/createInventory.dto';
 import { PrismaService } from '../prisma/prisma.service';
 import { Inventory, Prisma } from '@prisma/client';
 import { UpdateInventoryDto } from '../dtos/updateInventory.dto';
-import { DeleteInventoryDto } from '../dtos/deleteInventory.dto';
 import { TransferInventoryDto } from '../dtos/transferInventory.dto';
 
 @Injectable()
