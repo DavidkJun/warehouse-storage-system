@@ -24,6 +24,12 @@ export class InventoriesService {
     });
   }
   async insertInventory(data: CreateInventoryDto): Promise<Inventory> {
+    /*
+    const dataForFinding = {
+      productId: data.productId,
+      warehouseId: data.warehouseId,
+    };
+    */
     const inventory = await this.getInventory(data);
     if (!inventory) {
       const dataForCreate: Prisma.InventoryCreateInput = {
