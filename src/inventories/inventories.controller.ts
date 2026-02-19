@@ -1,8 +1,15 @@
-import { Controller, Post, Body, Get, Delete } from '@nestjs/common';
+import {
+  Controller,
+  Post,
+  Body,
+  Get,
+  Delete,
+  ParseIntPipe,
+  Param,
+} from '@nestjs/common';
 import { InventoriesService } from './inventories.service';
 import { CreateInventoryDto } from '../dtos/createInventory.dto';
 import { Inventory } from '@prisma/client';
-import { DeleteInventoryDto } from '../dtos/deleteInventory.dto';
 import { TransferInventoryDto } from '../dtos/transferInventory.dto';
 
 @Controller('inventories')
@@ -16,9 +23,11 @@ export class InventoriesController {
   async insertInventory(@Body() dto: CreateInventoryDto): Promise<Inventory> {
     return await this.inventoriesService.insertInventory(dto);
   }
-  @Delete()
-  async deleteInventory(@Body() dto: DeleteInventoryDto): Promise<Inventory> {
-    return await this.inventoriesService.deleteInventory(dto);
+  @Delete(':id')
+  async deleteInventory(
+    @Param('id', ParseIntPipe) id: number
+  ): Promise<Inventory> {
+    return await this.inventoriesService.deleteInventory(id);
   }
   @Post('transfer')
   async transferInventory(@Body() dto: TransferInventoryDto) {

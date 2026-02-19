@@ -56,8 +56,11 @@ export class InventoriesService {
     });
   }
 
-  async deleteInventory(data: DeleteInventoryDto) {
-    const inventory = await this.getInventory(data);
+  async deleteInventory(id: number) {
+    const inventory = await this.prisma.inventory.findUnique({
+      where: { id: id },
+    });
+
     if (!inventory) throw new HttpException('Inventory not found', 404);
     return this.prisma.inventory.delete({
       where: { id: inventory.id },
