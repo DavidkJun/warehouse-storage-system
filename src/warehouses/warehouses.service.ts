@@ -12,10 +12,6 @@ export class WarehousesService {
   }
 
   async createWarehouse(data: CreateWarehouseDto) {
-    const createdWarehouse = await this.prisma.warehouse.create({ data });
-    return {
-      name: createdWarehouse.name,
-      address: createdWarehouse.address,
-    };
+    return await this.prisma.warehouse.create({ data });
   }
 }
