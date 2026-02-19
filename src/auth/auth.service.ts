@@ -18,6 +18,7 @@ export class AuthService {
     }
     return null;
   }
+
   async login(customer: Partial<Customer>) {
     const payload = {
       email: customer.email,

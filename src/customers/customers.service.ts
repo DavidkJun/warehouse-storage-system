@@ -8,7 +8,6 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCustomerDto } from './createCustomer.dto';
 import { Prisma } from '@prisma/client';
 import { encodePassword } from '../utils/bcrypt';
-import { connect } from 'http2';
 
 @Injectable()
 export class CustomersService {

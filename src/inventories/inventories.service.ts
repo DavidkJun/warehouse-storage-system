@@ -74,6 +74,7 @@ export class InventoriesService {
           warehouseId: data.sourceWarehouseId,
         },
       });
+
       if (!sourceInventory) throw new HttpException('Inventory not found', 404);
       if (sourceInventory.quantity < data.quantityToTransfer)
         throw new HttpException('Not enough stock to transfer', 404);
@@ -87,6 +88,7 @@ export class InventoriesService {
           warehouseId: data.targetWarehouseId,
         },
       });
+
       if (!targetInventory) {
         const dataForCreate: Prisma.InventoryCreateInput = {
           product: { connect: { id: data.productId } },
