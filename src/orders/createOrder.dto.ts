@@ -11,6 +11,7 @@ import {
 export class OrderItemDto {
   @IsInt()
   @Min(1)
+  @Type(() => Number)
   quantity: number;
 
   @IsString()

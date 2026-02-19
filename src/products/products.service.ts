@@ -5,6 +5,7 @@ import { CreateProductDto } from '../dtos/createProduct.dto';
 @Injectable()
 export class ProductsService {
   constructor(private prisma: PrismaService) {}
+
   async getProducts(): Promise<ProductDto[]> {
     const products = await this.prisma.product.findMany({
       select: {
@@ -19,6 +20,7 @@ export class ProductsService {
       price: product.price.toNumber(),
     }));
   }
+
   async createProduct(data: CreateProductDto) {
     const createdProduct = await this.prisma.product.create({ data });
     return {
