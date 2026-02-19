@@ -1,4 +1,4 @@
-import { IsInt, IsPositive, IsNumber } from 'class-validator';
+import { IsInt, IsPositive } from 'class-validator';
 import { Type } from 'class-transformer';
 
 export class CreateInventoryDto {
