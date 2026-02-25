@@ -1,13 +1,12 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
 import * as process from 'node:process';
-import { CustomersService } from 'src/customers/customers.service';
-import { UnauthorizedException } from '@nestjs/common';
+import { PrismaService } from 'src/prisma/prisma.service';
 
 @Injectable()
 export class JwtStrategy extends PassportStrategy(Strategy) {
-  constructor(private customersService: CustomersService) {
+  constructor(private prisma: PrismaService) {
     const secret = process.env.JWT_SECRET;
     if (!secret) {
       throw new Error(
@@ -20,11 +19,40 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
       secretOrKey: secret,
     });
   }
+
   async validate(payload: any) {
-    const customer = await this.customersService.getCustomerById(payload.sub);
-    if (!customer) {
-      throw new UnauthorizedException('User not found or token invalid');
+    if (payload.role === 'admin') {
+      const admin = await this.prisma.admin.findUnique({
+        where: {
+          id: payload.sub,
+        },
+      });
+
+      if (!admin) {
+        throw new UnauthorizedException('Admin not found');
+      }
+
+      return {
+        id: admin.id,
+        email: admin.email,
+        name: admin.name,
+        role: 'admin',
+      };
+    } else {
+      const customer = await this.prisma.customer.findUnique({
+        where: {
+          id: payload.sub,
+        },
+      });
+      if (!customer) {
+        throw new UnauthorizedException('User not found or token invalid');
+      }
+      return {
+        id: customer.id,
+        name: customer.name,
+        email: customer.email,
+        role: 'customer',
+      };
     }
-    return customer;
   }
 }
