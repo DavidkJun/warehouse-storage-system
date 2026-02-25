@@ -8,6 +8,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateCustomerDto } from './createCustomer.dto';
 import { Prisma } from '@prisma/client';
 import { encodePassword } from '../utils/bcrypt';
+import { prepareUpdateData } from 'src/utils/prepareUpdate';
 
 @Injectable()
 export class CustomersService {
@@ -82,6 +83,21 @@ export class CustomersService {
         name: true,
         email: true,
         password: true,
+      },
+    });
+  }
+  async updateCustomer(id: number, data: Partial<CreateCustomerDto>) {
+    const customer = await this.getCustomerById(id);
+    if (!customer) throw new NotFoundException('Customer not found');
+
+    const dataForUpdate = prepareUpdateData(data, ['password']);
+    return this.prisma.customer.update({
+      where: { id: id },
+      data: dataForUpdate,
+      select: {
+        id: true,
+        name: true,
+        email: true,
       },
     });
   }
