@@ -5,7 +5,8 @@ import {
 } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
 import { CreateOrderDto } from './createOrder.dto';
-import { Prisma } from '@prisma/client';
+import { Order, OrderStatus, Prisma } from '@prisma/client';
+import { prepareUpdateData } from 'src/utils/prepareUpdate';
 @Injectable()
 export class OrdersService {
   constructor(private prisma: PrismaService) {}
@@ -67,6 +68,16 @@ export class OrdersService {
           orderItems: true,
         },
       });
+    });
+  }
+  async updateOrderStatus(id: number, status: OrderStatus): Promise<Order> {
+    return this.prisma.order.update({
+      where: {
+        id: id,
+      },
+      data: {
+        status: `${status}`,
+      },
     });
   }
 }
