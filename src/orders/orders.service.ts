@@ -71,12 +71,12 @@ export class OrdersService {
     });
   }
   async updateOrderStatus(id: number, status: OrderStatus): Promise<Order> {
-    return this.prisma.order.update({
+    return await this.prisma.order.update({
       where: {
         id: id,
       },
       data: {
-        status: `${status}`,
+        status: status,
       },
     });
   }

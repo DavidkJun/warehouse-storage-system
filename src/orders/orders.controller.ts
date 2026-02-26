@@ -13,8 +13,6 @@ import { CreateOrderDto } from './createOrder.dto';
 import { JwtGuard } from 'src/Guards/jwt.guard';
 import { RolesGuard } from 'src/Guards/roles.guard';
 import { Roles } from 'src/Decorators/roles.decorator';
-import { OrderStatus } from '@prisma/client';
-import { PrismaService } from 'src/prisma/prisma.service';
 import { UpdateOrderStatusDto } from './dto/updateOrderStatus.dto';
 
 @Controller('orders')
