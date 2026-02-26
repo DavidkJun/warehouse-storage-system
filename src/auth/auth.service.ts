@@ -1,12 +1,14 @@
 import { Injectable } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
-import { Customer } from '@prisma/client';
+import { Customer, Admin } from '@prisma/client';
+import { AdminsService } from 'src/admins/admins.service';
 import { CustomersService } from 'src/customers/customers.service';
 import { comparePasswords } from 'src/utils/bcrypt';
 @Injectable()
 export class AuthService {
   constructor(
     private readonly customerService: CustomersService,
+    private readonly adminService: AdminsService,
     private readonly jwtService: JwtService
   ) {}
 
@@ -23,9 +25,31 @@ export class AuthService {
     const payload = {
       email: customer.email,
       sub: customer.id,
+      role: 'CUSTOMER',
     };
     return {
-      acces_token: this.jwtService.sign(payload),
+      access_token: this.jwtService.sign(payload),
+    };
+  }
+
+  async validateAdmin(email: string, pass: string) {
+    const admin = await this.adminService.findAdminByEmail(email);
+
+    if (admin && (await comparePasswords(pass, admin.password))) {
+      const { password, ...result } = admin;
+      return result;
+    }
+    return null;
+  }
+
+  async loginAdmin(admin: Partial<Admin>) {
+    const payload = {
+      email: admin.email,
+      sub: admin.id,
+      role: 'ADMIN',
+    };
+    return {
+      access_token: this.jwtService.sign(payload),
     };
   }
 }
