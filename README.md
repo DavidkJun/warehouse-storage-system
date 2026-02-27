@@ -1,98 +1,138 @@
-<p align="center">
-  <a href="http://nestjs.com/" target="blank"><img src="https://nestjs.com/img/logo-small.svg" width="120" alt="Nest Logo" /></a>
-</p>
+# 📦 Enterprise Inventory & Order Management API
 
-[circleci-image]: https://img.shields.io/circleci/build/github/nestjs/nest/master?token=abc123def456
-[circleci-url]: https://circleci.com/gh/nestjs/nest
+![NestJS](https://img.shields.io/badge/nestjs-%23E0234E.svg?style=for-the-badge&logo=nestjs&logoColor=white)
+![Prisma](https://img.shields.io/badge/Prisma-3982CE?style=for-the-badge&logo=Prisma&logoColor=white)
+![PostgreSQL](https://img.shields.io/badge/postgresql-4169e1?style=for-the-badge&logo=postgresql&logoColor=white)
+![Docker](https://img.shields.io/badge/docker-%230db7ed.svg?style=for-the-badge&logo=docker&logoColor=white)
+![TypeScript](https://img.shields.io/badge/typescript-%23007ACC.svg?style=for-the-badge&logo=typescript&logoColor=white)
 
-  <p align="center">A progressive <a href="http://nodejs.org" target="_blank">Node.js</a> framework for building efficient and scalable server-side applications.</p>
-    <p align="center">
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/v/@nestjs/core.svg" alt="NPM Version" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/l/@nestjs/core.svg" alt="Package License" /></a>
-<a href="https://www.npmjs.com/~nestjscore" target="_blank"><img src="https://img.shields.io/npm/dm/@nestjs/common.svg" alt="NPM Downloads" /></a>
-<a href="https://circleci.com/gh/nestjs/nest" target="_blank"><img src="https://img.shields.io/circleci/build/github/nestjs/nest/master" alt="CircleCI" /></a>
-<a href="https://discord.gg/G7Qnnhy" target="_blank"><img src="https://img.shields.io/badge/discord-online-brightgreen.svg" alt="Discord"/></a>
-<a href="https://opencollective.com/nest#backer" target="_blank"><img src="https://opencollective.com/nest/backers/badge.svg" alt="Backers on Open Collective" /></a>
-<a href="https://opencollective.com/nest#sponsor" target="_blank"><img src="https://opencollective.com/nest/sponsors/badge.svg" alt="Sponsors on Open Collective" /></a>
-  <a href="https://paypal.me/kamilmysliwiec" target="_blank"><img src="https://img.shields.io/badge/Donate-PayPal-ff3f59.svg" alt="Donate us"/></a>
-    <a href="https://opencollective.com/nest#sponsor"  target="_blank"><img src="https://img.shields.io/badge/Support%20us-Open%20Collective-41B883.svg" alt="Support us"></a>
-  <a href="https://twitter.com/nestframework" target="_blank"><img src="https://img.shields.io/twitter/follow/nestframework.svg?style=social&label=Follow" alt="Follow us on Twitter"></a>
-</p>
-  <!--[![Backers on Open Collective](https://opencollective.com/nest/backers/badge.svg)](https://opencollective.com/nest#backer)
-  [![Sponsors on Open Collective](https://opencollective.com/nest/sponsors/badge.svg)](https://opencollective.com/nest#sponsor)-->
+A robust, highly scalable backend application built with **NestJS**, **Prisma ORM**, and **PostgreSQL**. This system is designed to manage complex e-commerce and supply chain operations, featuring comprehensive inventory tracking, transactional order fulfillment, and strict Role-Based Access Control (RBAC).
 
-## Description
+Built with a strong emphasis on clean architecture, separation of concerns, and security best practices.
 
-[Nest](https://github.com/nestjs/nest) framework TypeScript starter repository.
+---
 
-## Project setup
+## ✨ Key Features
 
+* **Advanced Role-Based Access Control (RBAC):** Distinct authentication flows and database tables for `Customers` and `Admins`. Secured via custom Decorators (`@Roles`) and Guards (`JwtGuard`, `RolesGuard`, `LocalGuard`).
+* **Transactional Safety:** Critical operations, such as inventory transfers between warehouses and order placements, utilize database transactions to ensure data integrity and prevent race conditions.
+* **Smart Order Fulfillment:** Automated stock validation and total price calculation during checkout.
+* **Robust Security:** Passwords hashed via `bcrypt`. API endpoints protected by stateless JWT authentication strategies. Payload validation handled cleanly via NestJS Validation Pipes (`class-validator`).
+* **Containerized Deployment:** Fully Dockerized local development environment utilizing `docker-compose`.
+
+---
+
+## 🏗️ Architecture Overview
+
+The application follows a modular, domain-driven design pattern:
+
+* **Modules:** Independent domains (`Products`, `Warehouses`, `Inventories`, `Customers`, `Orders`, `Admins`, `Auth`).
+* **Controllers:** Handle HTTP routing and payload validation via DTOs.
+* **Services:** Contain isolated business logic and interact with the database.
+* **Prisma Layer:** Serves as the single source of truth for the database schema, utilizing migrations to track state.
+
+---
+
+## 🚀 Getting Started
+
+### Prerequisites
+* **Node.js** (v18+ recommended)
+* **PostgreSQL** (or Docker Desktop to run the provided container)
+* **npm** or **yarn**
+
+### 1. Clone & Install
 ```bash
-$ npm install
+git clone https://github.com/DavidkJun/warehouse-storage-system
+```
+```bash
+cd warehouse-storage-system
+```
+```bash
+npm install
 ```
 
-## Compile and run the project
+### 2. Environment Configuration
+Create a `.env` file in the root directory and configure the following variables. *(Note: Never commit your actual `.env` file to version control)*:
+```env
+# Application Setup
+PORT=3000
 
-```bash
-# development
-$ npm run start
+# Database Configuration (PostgreSQL)
+DATABASE_URL="postgresql://user:password@localhost:5432/inventory_db?schema=public"
 
-# watch mode
-$ npm run start:dev
-
-# production mode
-$ npm run start:prod
+# Authentication Security
+JWT_SECRET="your_secret_jwt_key"
+JWT_EXPIRATION="24h"
 ```
 
-## Run tests
-
+### 3. Database Setup (Docker & Prisma)
+If you don't have a local Postgres instance, spin up the Docker container:
 ```bash
-# unit tests
-$ npm run test
-
-# e2e tests
-$ npm run test:e2e
-
-# test coverage
-$ npm run test:cov
+docker-compose up -d
+```
+Run Prisma migrations to generate the schema and TypeScript types:
+```bash
+npx prisma generate
+npx prisma migrate dev --name init
 ```
 
-## Deployment
-
-When you're ready to deploy your NestJS application to production, there are some key steps you can take to ensure it runs as efficiently as possible. Check out the [deployment documentation](https://docs.nestjs.com/deployment) for more information.
-
-If you are looking for a cloud-based platform to deploy your NestJS application, check out [Mau](https://mau.nestjs.com), our official platform for deploying NestJS applications on AWS. Mau makes deployment straightforward and fast, requiring just a few simple steps:
-
+### 4. Start the Application
 ```bash
-$ npm install -g mau
-$ mau deploy
+# Development mode
+npm run start:dev
+
+# Production mode
+npm run start:prod
 ```
 
-With Mau, you can deploy your application in just a few clicks, allowing you to focus on building features rather than managing infrastructure.
+---
 
-## Resources
+## 🔐 Security & Authentication Flow
 
-Check out a few resources that may come in handy when working with NestJS:
+This API utilizes a dual-strategy authentication system to strictly separate Admin and Customer scopes:
 
-- Visit the [NestJS Documentation](https://docs.nestjs.com) to learn more about the framework.
-- For questions and support, please visit our [Discord channel](https://discord.gg/G7Qnnhy).
-- To dive deeper and get more hands-on experience, check out our official video [courses](https://courses.nestjs.com/).
-- Deploy your application to AWS with the help of [NestJS Mau](https://mau.nestjs.com) in just a few clicks.
-- Visualize your application graph and interact with the NestJS application in real-time using [NestJS Devtools](https://devtools.nestjs.com).
-- Need help with your project (part-time to full-time)? Check out our official [enterprise support](https://enterprise.nestjs.com).
-- To stay in the loop and get updates, follow us on [X](https://x.com/nestframework) and [LinkedIn](https://linkedin.com/company/nestjs).
-- Looking for a job, or have a job to offer? Check out our official [Jobs board](https://jobs.nestjs.com).
+1. **Local Strategies:** Separate `LocalStrategy` and `AdminLocalStrategy` validate credentials against their respective database tables.
+2. **JWT Issuance:** Upon successful login, the `AuthService` issues a JWT containing the user's UUID and specific `role`.
+3. **Route Protection:** The `JwtStrategy` unpacks the token, while the `RolesGuard` strictly enforces authorization rules (e.g., ensuring only Admins can patch order statuses or transfer inventory).
 
-## Support
+---
 
-Nest is an MIT-licensed open source project. It can grow thanks to the sponsors and support by the amazing backers. If you'd like to join them, please [read more here](https://docs.nestjs.com/support).
+## 📡 Core API Endpoints
 
-## Stay in touch
+*Note: This is a high-level overview. All POST/PATCH routes validate incoming data using DTOs.*
 
-- Author - [Kamil Myśliwiec](https://twitter.com/kammysliwiec)
-- Website - [https://nestjs.com](https://nestjs.com/)
-- Twitter - [@nestframework](https://twitter.com/nestframework)
+### Authentication
+* `POST /auth/login` - Customer login
+* `POST /auth/admin/login` - Administrator login
 
-## License
+### Orders
+* `POST /orders` - Place a new order (Validates stock, calculates price) - *[Customer]*
+* `GET /orders/:id` - Retrieve order details - *[Customer/Admin]*
+* `PATCH /orders/:id/status` - Update order status (NEW, SHIPPED, etc.) - *[Admin Only]*
 
-Nest is [MIT licensed](https://github.com/nestjs/nest/blob/master/LICENSE).
+### Inventory & Warehouses
+* `POST /inventory/transfer` - Transactional stock transfer between locations - *[Admin Only]*
+* `GET /warehouses/:id/stock` - View current stock levels - *[Admin Only]*
+
+### Products & Customers
+* Standard CRUD operations available (`GET`, `POST`, `PATCH`, `DELETE`). Restricted by RBAC.
+
+---
+
+## 🧪 Testing
+
+The project includes End-to-End (e2e) tests to ensure critical user journeys and transactional operations function flawlessly in an isolated environment.
+
+```bash
+# Run e2e tests
+npm run test:e2e
+```
+
+---
+
+## ☁️ Deployment
+
+This application is built to be cloud-native and easily deployable to cloud platforms.
+1. Ensure `NODE_ENV=production`.
+2. Run `npm run build` to compile the TypeScript application to the `/dist` folder.
+3. The built application and database can be deployed using standard container orchestration or via CI/CD pipelines targeting cloud providers.
