@@ -21,7 +21,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   }
 
   async validate(payload: any) {
-    if (payload.role === 'admin') {
+    if (payload.role === 'ADMIN') {
       const admin = await this.prisma.admin.findUnique({
         where: {
           id: payload.sub,
@@ -36,7 +36,7 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
         id: admin.id,
         email: admin.email,
         name: admin.name,
-        role: 'admin',
+        role: 'ADMIN',
       };
     } else {
       const customer = await this.prisma.customer.findUnique({
