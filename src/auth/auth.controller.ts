@@ -1,6 +1,7 @@
 import { Controller, Post, UseGuards, Request } from '@nestjs/common';
 import { AuthService } from './auth.service';
 import { LocaAuthlGuard } from 'src/Guards/local.guard';
+import { AdminLocalAuthGuard } from 'src/Guards/admin-local.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -10,5 +11,11 @@ export class AuthController {
   @Post('login')
   async login(@Request() req) {
     return await this.authService.login(req.user);
+  }
+
+  @UseGuards(AdminLocalAuthGuard)
+  @Post('admin/login')
+  async loginAdmin(@Request() req) {
+    return await this.authService.loginAdmin(req.user);
   }
 }
