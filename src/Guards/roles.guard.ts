@@ -27,9 +27,6 @@ export class RolesGuard implements CanActivate {
     const request = context.switchToHttp().getRequest();
     const user = request.user;
 
-    console.log('RolesGuard - requiredRoles: ', requiredRoles);
-    console.log('RolesGuard - User from request: ', user);
-
     if (!user) {
       throw new ForbiddenException('User not authenticated');
     }
@@ -37,7 +34,7 @@ export class RolesGuard implements CanActivate {
     const hasRequiredRole = requiredRoles.some((role) => user.role === role);
 
     if (!hasRequiredRole) {
-      throw new ForbiddenException('You need admin privilages for this action');
+      throw new ForbiddenException('You need admin privileges for this action');
     }
     return true;
   }

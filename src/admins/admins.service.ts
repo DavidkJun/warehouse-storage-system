@@ -16,25 +16,17 @@ export class AdminsService {
   constructor(private prisma: PrismaService) {}
 
   async findAdminById(id: number) {
-    console.log(typeof id);
     const admin = await this.prisma.admin.findUnique({
-      where: {
-        id: id,
-      },
+      where: { id },
     });
-    console.log(admin);
     if (!admin) throw new NotFoundException('Admin not found');
     return admin;
   }
 
   async findAdminByEmail(email: string) {
-    const admin = await this.prisma.admin.findUnique({
-      where: {
-        email: email,
-      },
+    return this.prisma.admin.findUnique({
+      where: { email },
     });
-    if (!admin) throw new NotFoundException('Admin not found');
-    return admin;
   }
 
   async createAdmin(data: CreateAdminDto) {
@@ -79,7 +71,11 @@ export class AdminsService {
     });
   }
 
-  remove(id: number) {
-    return `This action removes a #${id} admin`;
+  async remove(id: number) {
+    await this.findAdminById(id);
+    return this.prisma.admin.delete({
+      where: { id },
+      select: { id: true, name: true, email: true },
+    });
   }
 }
