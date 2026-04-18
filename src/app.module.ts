@@ -9,9 +9,10 @@ import { CustomersModule } from './customers/customers.module';
 import { OrdersModule } from './orders/orders.module';
 import { AuthModule } from './auth/auth.module';
 import { AdminsModule } from './admins/admins.module';
+import { RedisModule } from './redis/redis.module';
 
 @Module({
-  imports: [PrismaModule, ProductsModule, WarehousesModule, InventoriesModule, CustomersModule, OrdersModule, AuthModule, AdminsModule],
+  imports: [RedisModule, PrismaModule, ProductsModule, WarehousesModule, InventoriesModule, CustomersModule, OrdersModule, AuthModule, AdminsModule],
   controllers: [AppController],
   providers: [AppService],
 })
